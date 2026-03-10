@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PayDay — Employee Payroll System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ── LOGIN SCREEN ──────────────────────────────────────── -->
+<div id="screen-login" class="screen active">
+  <div class="login-wrap">
+    <div class="login-deco"></div>
+    <div class="login-card">
+      <div class="brand">
+        <span class="brand-icon">₱</span>
+        <h1>PayDay</h1>
+        <p class="brand-sub">Employee Payroll System</p>
+      </div>
+      <div id="login-form" class="form-section">
+        <label>Username</label>
+        <input id="login-username" type="text" placeholder="your username" autocomplete="off" />
+        <label>Password</label>
+        <input id="login-password" type="password" placeholder="••••••" />
+        <div id="login-error" class="form-error hidden"></div>
+        <button class="btn btn-primary" onclick="doLogin()">Sign In</button>
+        <button class="btn btn-ghost" onclick="showForgot()">Forgot password?</button>
+      </div>
+      <div id="forgot-form" class="form-section hidden">
+        <h3>Reset Password</h3>
+        <label>Username</label>
+        <input id="forgot-username" type="text" placeholder="your username" />
+        <label>Email</label>
+        <input id="forgot-email" type="email" placeholder="registered email" />
+        <div id="forgot-error" class="form-error hidden"></div>
+        <button class="btn btn-primary" onclick="doForgot()">Send Reset Code</button>
+        <button class="btn btn-ghost" onclick="showLogin()">← Back to login</button>
+      </div>
+      <div id="reset-form" class="form-section hidden">
+        <h3>New Password</h3>
+        <label>Reset Code</label>
+        <input id="reset-token" type="text" placeholder="6-digit code" />
+        <label>New Password</label>
+        <input id="reset-pass" type="password" placeholder="min 3 characters" />
+        <div id="reset-error" class="form-error hidden"></div>
+        <button class="btn btn-primary" onclick="doReset()">Reset Password</button>
+        <button class="btn btn-ghost" onclick="showLogin()">← Back to login</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN APP ───────────────────────────────────────────── -->
+<div id="screen-app" class="screen hidden">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-icon sm">₱</span>
+      <span>PayDay</span>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <div class="user-chip" id="user-chip"></div>
+      <button class="btn btn-ghost sm" onclick="doLogout()">Sign out</button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main-content">
+    <div id="page-dashboard"  class="page active"></div>
+    <div id="page-employees"  class="page hidden"></div>
+    <div id="page-add-emp"    class="page hidden"></div>
+    <div id="page-payroll"    class="page hidden"></div>
+    <div id="page-calc"       class="page hidden"></div>
+    <div id="page-report"     class="page hidden"></div>
+    <div id="page-payslip"    class="page hidden"></div>
+    <div id="page-my-payroll" class="page hidden"></div>
+  </main>
+</div>
+
+<!-- ── MODAL ─────────────────────────────────────────────── -->
+<div id="modal-overlay" class="modal-overlay hidden" onclick="closeModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+id,username,password,full_name,department,position,base_salary,hourly_rate,email,phone,date_hired,role,active
+1,"admin","admin123","System Administrator","Administration","Admin",50000.00,250.00,"admin@payday.com","09000000000","2024-01-01",0,1
+2,"heart","123","Heart Conserva","Engineering","Software Engineer",35000.00,175.00,"heart@payday.com","09111111111","2025-03-05",1,1
+3,"eryle","123","Eryle Delos Santos","Accounting","Accountant",30000.00,150.00,"eryle@payday.com","09222222222","2025-03-05",1,1
+4,"angel","123","Angel Consolacion","Human Resources","HR Officer",28000.00,140.00,"angel@payday.com","09333333333","2025-03-05",1,1
+5,"kael","123","Kael Garcia","Engineering","Junior Developer",25000.00,125.00,"kael@payday.com","09444444444","2025-03-05",1,1
+6,"cj","123","CJ Quitaneg","Sales","Sales Representative",27000.00,135.00,"cj@payday.com","09555555555","2025-03-05",1,1
