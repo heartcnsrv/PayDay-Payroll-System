@@ -1,6 +1,4 @@
 /* ============================================================
-   PayDay | src/server/HttpServer.c
-   All API logic lives here. PHP is only a proxy.
 
    Routes:
      POST /auth       → login, forgot-password, reset-password
@@ -34,11 +32,9 @@
 
 char g_data_dir[512] = "data";
 
-/* ── Reset token store (in-memory, simple) ─────────────────── */
 static char g_reset_username[64] = {0};
 static char g_reset_token[16]    = {0};
 
-/* ── Send all bytes ──────────────────────────────────────────── */
 static void send_all(sock_t fd, const char* data, int len) {
     int sent = 0;
     while (sent < len) {
@@ -48,7 +44,6 @@ static void send_all(sock_t fd, const char* data, int len) {
     }
 }
 
-/* ── Handle one HTTP connection ──────────────────────────────── */
 typedef struct { sock_t fd; } ClientArgs;
 
 static THREAD_FUNC handle_client(void* arg) {
@@ -67,13 +62,11 @@ static THREAD_FUNC handle_client(void* arg) {
 
         char* hdr_end = strstr(buf, "\r\n\r\n");
         if (hdr_end) {
-            /* Find content-length */
             char lower[8192];
             int  hdr_len = (int)(hdr_end - buf);
             if (hdr_len > (int)sizeof(lower) - 1) hdr_len = (int)sizeof(lower) - 1;
             strncpy(lower, buf, (size_t)hdr_len);
             lower[hdr_len] = '\0';
-            /* lowercase header */
             for (int i = 0; i < hdr_len; i++)
                 lower[i] = (char)tolower((unsigned char)lower[i]);
 
@@ -86,11 +79,9 @@ static THREAD_FUNC handle_client(void* arg) {
     }
     if (total <= 0) { sock_close(fd); THREAD_RET; }
 
-    /* Parse request line */
     char method[16] = {0}, path[256] = {0};
     sscanf(buf, "%15s %255s", method, path);
 
-    /* Build response helper */
     #define RESPOND(body_str) do { \
         const char* _b = (body_str); \
         int   _bl = (int)strlen(_b); \
@@ -121,7 +112,6 @@ static THREAD_FUNC handle_client(void* arg) {
         THREAD_RET;
     }
 
-    /* Extract body */
     char* hdr_end = strstr(buf, "\r\n\r\n");
     const char* body = hdr_end ? hdr_end + 4 : "";
 
@@ -132,7 +122,6 @@ static THREAD_FUNC handle_client(void* arg) {
     THREAD_RET;
 }
 
-/* ── Main server loop ────────────────────────────────────────── */
 void server_run(int port) {
 #ifdef _WIN32
     WSADATA wsa;
@@ -173,7 +162,6 @@ void server_run(int port) {
     }
 }
 
-/* ── Dispatcher ──────────────────────────────────────────────── */
 char* server_dispatch(const char* path, const char* body) {
     if (strncmp(path, "/auth",      5) == 0) return route_auth(body);
     if (strncmp(path, "/employees", 10)== 0) return route_employees(body);
@@ -182,10 +170,6 @@ char* server_dispatch(const char* path, const char* body) {
     return json_err("Unknown endpoint.");
 }
 
-/* ============================================================
-   /auth
-   actions: login | forgot_password | reset_password
-   ============================================================ */
 char* route_auth(const char* body) {
     char action[32], username[64], password[64], token[16], new_pass[64];
     json_get_str(body, "action",   action,   sizeof(action));
@@ -198,7 +182,6 @@ char* route_auth(const char* body) {
     Employee employees[MAX_EMPLOYEES];
     int count = csv_load_employees(path, employees, MAX_EMPLOYEES);
 
-    /* ── login ─────────────────────────────────────────────── */
     if (strcmp(action, "login") == 0) {
         for (int i = 0; i < count; i++) {
             Employee* e = &employees[i];
@@ -227,7 +210,6 @@ char* route_auth(const char* body) {
         return json_err("Invalid username or password.");
     }
 
-    /* ── forgot_password ───────────────────────────────────── */
     if (strcmp(action, "forgot_password") == 0) {
         char email[128];
         json_get_str(body, "email", email, sizeof(email));
@@ -237,7 +219,6 @@ char* route_auth(const char* body) {
                 employees[i].active) {
                 payroll_generate_token(g_reset_token, sizeof(g_reset_token));
                 strncpy(g_reset_username, username, sizeof(g_reset_username)-1);
-                /* In production: email the token. Here we return it directly. */
                 char buf[128];
                 snprintf(buf, sizeof(buf), "\"token\":\"%s\"", g_reset_token);
                 return json_ok(buf);
@@ -246,7 +227,6 @@ char* route_auth(const char* body) {
         return json_err("No account found with that username and email.");
     }
 
-    /* ── reset_password ────────────────────────────────────── */
     if (strcmp(action, "reset_password") == 0) {
         json_get_str(body, "token",    token,    sizeof(token));
         json_get_str(body, "new_pass", new_pass, sizeof(new_pass));
@@ -274,10 +254,6 @@ char* route_auth(const char* body) {
     return json_err("Unknown auth action.");
 }
 
-/* ============================================================
-   /employees
-   actions: list | add | update | deactivate | get
-   ============================================================ */
 char* route_employees(const char* body) {
     char action[32];
     json_get_str(body, "action", action, sizeof(action));
@@ -288,7 +264,6 @@ char* route_employees(const char* body) {
     Employee employees[MAX_EMPLOYEES];
     int count = csv_load_employees(path, employees, MAX_EMPLOYEES);
 
-    /* ── list ──────────────────────────────────────────────── */
     if (strcmp(action, "list") == 0) {
         char* arr = (char*)malloc(65536);
         strcpy(arr, "[");
@@ -324,7 +299,6 @@ char* route_employees(const char* body) {
         return ret;
     }
 
-    /* ── get (single employee) ─────────────────────────────── */
     if (strcmp(action, "get") == 0) {
         int id = json_get_int(body, "id", 0);
         for (int i = 0; i < count; i++) {
@@ -351,7 +325,6 @@ char* route_employees(const char* body) {
         return json_err("Employee not found.");
     }
 
-    /* ── add ───────────────────────────────────────────────── */
     if (strcmp(action, "add") == 0) {
         Employee e;
         memset(&e, 0, sizeof(e));
@@ -371,7 +344,6 @@ char* route_employees(const char* body) {
 
         if (!e.date_hired[0]) csv_today(e.date_hired, sizeof(e.date_hired));
 
-        /* Check duplicate username */
         for (int i = 0; i < count; i++) {
             if (strcmp(employees[i].username, e.username) == 0 && employees[i].active)
                 return json_err("Username already taken.");
@@ -389,7 +361,6 @@ char* route_employees(const char* body) {
         return json_ok(buf);
     }
 
-    /* ── update ────────────────────────────────────────────── */
     if (strcmp(action, "update") == 0) {
         int id = json_get_int(body, "id", 0);
         for (int i = 0; i < count; i++) {
@@ -420,7 +391,6 @@ char* route_employees(const char* body) {
         return json_err("Employee not found.");
     }
 
-    /* ── deactivate ────────────────────────────────────────── */
     if (strcmp(action, "deactivate") == 0) {
         int id = json_get_int(body, "id", 0);
         for (int i = 0; i < count; i++) {
@@ -436,10 +406,6 @@ char* route_employees(const char* body) {
     return json_err("Unknown employees action.");
 }
 
-/* ============================================================
-   /payroll
-   actions: calculate | list | get | release
-   ============================================================ */
 char* route_payroll(const char* body) {
     char action[32];
     json_get_str(body, "action", action, sizeof(action));
@@ -453,7 +419,6 @@ char* route_payroll(const char* body) {
     int emp_count = csv_load_employees(emp_path, employees, MAX_EMPLOYEES);
     int pay_count = csv_load_payroll  (pay_path, payroll,   MAX_PAYROLL);
 
-    /* ── calculate ─────────────────────────────────────────── */
     if (strcmp(action, "calculate") == 0) {
         int    emp_id    = json_get_int(body, "employee_id", 0);
         char   ps[16], pe[16];
@@ -495,7 +460,6 @@ char* route_payroll(const char* body) {
         return json_ok(buf);
     }
 
-    /* ── list ──────────────────────────────────────────────── */
     if (strcmp(action, "list") == 0) {
         int filter_id = json_get_int(body, "employee_id", 0);
         char* arr = (char*)malloc(131072);
@@ -506,7 +470,6 @@ char* route_payroll(const char* body) {
             PayrollRecord* p = &payroll[i];
             if (filter_id > 0 && p->employee_id != filter_id) continue;
 
-            /* Find employee name */
             const char* emp_name = "";
             for (int j = 0; j < emp_count; j++)
                 if (employees[j].id == p->employee_id) {
@@ -537,7 +500,6 @@ char* route_payroll(const char* body) {
         return ret;
     }
 
-    /* ── get (single record) ───────────────────────────────── */
     if (strcmp(action, "get") == 0) {
         int id = json_get_int(body, "id", 0);
         for (int i = 0; i < pay_count; i++) {
@@ -574,7 +536,6 @@ char* route_payroll(const char* body) {
         return json_err("Payroll record not found.");
     }
 
-    /* ── release ───────────────────────────────────────────── */
     if (strcmp(action, "release") == 0) {
         int id = json_get_int(body, "id", 0);
         for (int i = 0; i < pay_count; i++) {
@@ -590,10 +551,6 @@ char* route_payroll(const char* body) {
     return json_err("Unknown payroll action.");
 }
 
-/* ============================================================
-   /report
-   action: summary — total gross/net/deductions for a period
-   ============================================================ */
 char* route_report(const char* body) {
     char ps[16], pe[16];
     json_get_str(body, "period_start", ps, sizeof(ps));
@@ -617,7 +574,6 @@ char* route_report(const char* body) {
 
     for (int i = 0; i < pay_count; i++) {
         PayrollRecord* p = &payroll[i];
-        /* Filter by period if given */
         if (ps[0] && strcmp(p->period_start, ps) < 0) continue;
         if (pe[0] && strcmp(p->period_end,   pe) > 0) continue;
 
@@ -663,9 +619,6 @@ char* route_report(const char* body) {
     return ret;
 }
 
-/* ============================================================
-   JSON Helpers
-   ============================================================ */
 
 char* json_get_str(const char* json, const char* key, char* out, int outlen) {
     out[0] = '\0';

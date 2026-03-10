@@ -1,8 +1,6 @@
 <?php
 // ============================================================
-//  PayDay | backend/proxy.php
 //  Forwards every /api/* request to the C backend on :8081.
-//  NO logic here. The C server handles everything.
 // ============================================================
 
 define('C_SERVER', 'http://127.0.0.1:8081');
@@ -14,7 +12,6 @@ header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(200); exit; }
 
-// Extract endpoint from URL: /api/auth → auth
 $uri      = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $segments = array_values(array_filter(explode('/', trim($uri, '/')), 'strlen'));
 $endpoint = '';

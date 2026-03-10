@@ -3,7 +3,6 @@
 #endif
 
 /* ============================================================
-   PayDay | src/ui/ConsoleUI.c
 
    ADMIN MENU:
      [1] Employee List
@@ -39,7 +38,6 @@
   #define CLEAR "clear"
 #endif
 
-/* ── Colours ─────────────────────────────────────────────────── */
 #define R   "\033[0m"
 #define BLD "\033[1m"
 #define GRN "\033[92m"
@@ -50,7 +48,6 @@
 #define RED "\033[91m"
 #define WHT "\033[97m"
 
-/* ── Basic helpers ───────────────────────────────────────────── */
 void ui_clear  (void) { system(CLEAR); }
 void ui_hr     (void) { printf(PNK "  ──────────────────────────────────────────────────\n" R); }
 void ui_dhr    (void) { printf(PNK "  ══════════════════════════════════════════════════\n" R); }
@@ -69,17 +66,9 @@ void ui_pause(int ms) {
 
 void ui_logo(void) {
     printf("\n");
-    printf(PNK BLD
-    "   ██████╗  █████╗ ██╗   ██╗██████╗  █████╗ ██╗   ██╗\n"
-    "   ██╔══██╗██╔══██╗╚██╗ ██╔╝██╔══██╗██╔══██╗╚██╗ ██╔╝\n"
-    "   ██████╔╝███████║ ╚████╔╝ ██║  ██║███████║ ╚████╔╝ \n"
-    "   ██╔═══╝ ██╔══██║  ╚██╔╝  ██║  ██║██╔══██║  ╚██╔╝  \n"
-    "   ██║     ██║  ██║   ██║   ██████╔╝██║  ██║   ██║   \n"
-    "   ╚═╝     ╚═╝  ╚═╝   ╚═╝   ╚═════╝ ╚═╝  ╚═╝   ╚═╝\n" R);
-    printf(GRY "   Employee Payroll System  v1.0\n\n" R);
+    printf(GRY "   Employee Payroll System\n\n" R);
 }
 
-/* ── Input ───────────────────────────────────────────────────── */
 void get_line(const char* prompt, char* out, int len) {
     printf(CYN "  %s" WHT, prompt);
     fflush(stdout);
@@ -101,7 +90,6 @@ void press_enter(void) {
     char b[4]; get_line("Press Enter to continue...", b, sizeof(b));
 }
 
-/* ── Page header ─────────────────────────────────────────────── */
 static void phdr(const char* title, const char* sub) {
     ui_clear(); ui_logo(); ui_dhr();
     printf(WHT BLD "  %s\n" R, title);
@@ -117,9 +105,6 @@ static int confirm_yn(const char* msg) {
     return 0;
 }
 
-/* ============================================================
-   FORGOT PASSWORD
-   ============================================================ */
 void screen_forgot_password(Employee* employees, int count, const char* emp_path) {
     phdr("Forgot Password", "Reset your password using your email");
 
@@ -167,9 +152,6 @@ void screen_forgot_password(Employee* employees, int count, const char* emp_path
     ui_pause(1500);
 }
 
-/* ============================================================
-   LOGIN
-   ============================================================ */
 void screen_login(Employee* out, Employee* employees, int count,
                   const char* emp_path) {
     char username[64], password[64];
@@ -200,9 +182,6 @@ void screen_login(Employee* out, Employee* employees, int count,
     }
 }
 
-/* ============================================================
-   EMPLOYEE LIST
-   ============================================================ */
 void screen_employee_list(Employee* employees, int count) {
     phdr("Employee List", NULL);
     printf(GRY "  %-4s  %-22s  %-18s  %-16s  %13s  %-8s\n" R,
@@ -225,9 +204,6 @@ void screen_employee_list(Employee* employees, int count) {
     press_enter();
 }
 
-/* ============================================================
-   ADD EMPLOYEE
-   ============================================================ */
 void screen_add_employee(Employee* employees, int* count, const char* path) {
     phdr("Add Employee", "Create a new account");
 
@@ -265,7 +241,6 @@ void screen_add_employee(Employee* employees, int* count, const char* path) {
         }
     }
 
-    /* Summary before confirm */
     ui_hr();
     printf(WHT "  Summary\n" R);
     printf("  %-16s %s\n", "Username:",    e.username);
@@ -285,9 +260,6 @@ void screen_add_employee(Employee* employees, int* count, const char* path) {
     ui_pause(1200);
 }
 
-/* ============================================================
-   EDIT EMPLOYEE
-   ============================================================ */
 void screen_edit_employee(Employee* employees, int count, const char* path) {
     phdr("Edit Employee", "Update employee information");
     printf(GRY "  %-4s  %-22s  %-18s\n" R, "ID","Full Name","Department");
@@ -342,9 +314,6 @@ void screen_edit_employee(Employee* employees, int count, const char* path) {
     ui_pause(1200);
 }
 
-/* ============================================================
-   DEACTIVATE EMPLOYEE
-   ============================================================ */
 void screen_deactivate_emp(Employee* employees, int count, const char* path) {
     phdr("Deactivate Employee", "Remove employee from the system");
     printf(GRY "  %-4s  %-22s  %-18s\n" R, "ID","Full Name","Department");
@@ -374,9 +343,6 @@ void screen_deactivate_emp(Employee* employees, int count, const char* path) {
     ui_error("Employee not found."); ui_pause(1200);
 }
 
-/* ============================================================
-   CALCULATE PAYROLL  (salary + overtime + deductions)
-   ============================================================ */
 void screen_calc_payroll(Employee* emp, const char* pay_path) {
     char sub[160];
     snprintf(sub, sizeof(sub), "%s  |  Base: PHP %.2f  |  Rate: PHP %.2f/hr",
@@ -400,16 +366,13 @@ void screen_calc_payroll(Employee* emp, const char* pay_path) {
            DEFAULT_PHILHEALTH_RATE*100, DEFAULT_PAGIBIG_FIXED);
     double other = get_double("  Additional deductions (PHP) : ");
 
-    /* Compute */
     PayrollRecord rec;
     payroll_calculate(&rec, emp, ps, pe, ot, other, NULL);
 
-    /* Assign ID */
     PayrollRecord payroll[MAX_PAYROLL];
     int pay_count = csv_load_payroll(pay_path, payroll, MAX_PAYROLL);
     rec.id = csv_next_payroll_id(payroll, pay_count);
 
-    /* Show summary */
     ui_dhr();
     printf(WHT BLD "  PAYROLL SUMMARY — %s\n" R, emp->full_name);
     printf(GRY "  Period: %s  to  %s\n\n" R, ps, pe);
@@ -444,9 +407,6 @@ void screen_calc_payroll(Employee* emp, const char* pay_path) {
     ui_pause(1400);
 }
 
-/* ============================================================
-   VIEW PAYSLIP
-   ============================================================ */
 void screen_payslip(int payroll_id, Employee* employees, int emp_count,
                     const char* pay_path) {
     PayrollRecord payroll[MAX_PAYROLL];
@@ -504,9 +464,6 @@ void screen_payslip(int payroll_id, Employee* employees, int emp_count,
     press_enter();
 }
 
-/* ============================================================
-   RELEASE PAYROLL
-   ============================================================ */
 void screen_release_payroll(Employee* employees, int emp_count, const char* pay_path) {
     PayrollRecord payroll[MAX_PAYROLL];
     int pay_count = csv_load_payroll(pay_path, payroll, MAX_PAYROLL);
@@ -548,9 +505,6 @@ void screen_release_payroll(Employee* employees, int emp_count, const char* pay_
     ui_error("Record not found."); ui_pause(1200);
 }
 
-/* ============================================================
-   PAYROLL LIST
-   ============================================================ */
 void screen_payroll_list(int filter_emp_id, Employee* employees, int emp_count,
                          const char* pay_path) {
     for (;;) {
@@ -602,9 +556,6 @@ void screen_payroll_list(int filter_emp_id, Employee* employees, int emp_count,
     }
 }
 
-/* ============================================================
-   PAYROLL REPORT
-   ============================================================ */
 void screen_report(Employee* employees, int emp_count, const char* pay_path) {
     PayrollRecord payroll[MAX_PAYROLL];
     int pay_count = csv_load_payroll(pay_path, payroll, MAX_PAYROLL);
@@ -644,9 +595,6 @@ void screen_report(Employee* employees, int emp_count, const char* pay_path) {
     press_enter();
 }
 
-/* ============================================================
-   ADMIN MENU
-   ============================================================ */
 void screen_admin_menu(Employee* admin, Employee* employees, int* emp_count,
                        const char* emp_path, const char* pay_path) {
     for (;;) {
@@ -670,7 +618,6 @@ void screen_admin_menu(Employee* admin, Employee* employees, int* emp_count,
         else if (ch[0]=='3') screen_edit_employee(employees, *emp_count, emp_path);
         else if (ch[0]=='4') screen_deactivate_emp(employees, *emp_count, emp_path);
         else if (ch[0]=='5') {
-            /* pick employee */
             phdr("Calculate Payroll", "Select an employee");
             printf(GRY "  %-4s  %-22s  %-18s  %13s\n" R,
                    "ID","Full Name","Department","Base Salary");
@@ -699,9 +646,6 @@ void screen_admin_menu(Employee* admin, Employee* employees, int* emp_count,
     }
 }
 
-/* ============================================================
-   EMPLOYEE MENU
-   ============================================================ */
 void screen_employee_menu(Employee* emp, const char* pay_path,
                           Employee* employees, int emp_count) {
     for (;;) {

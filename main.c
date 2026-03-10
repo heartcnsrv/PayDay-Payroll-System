@@ -1,9 +1,7 @@
 /* ============================================================
-   PayDay | main.c
    Console application entry point.
 
    Data lives in data/employees.csv and data/payroll.csv.
-   Edit those files directly to add/change seed data.
    ============================================================ */
 #include "src/core/PayrollTypes.h"
 #include "src/ui/ConsoleUI.h"
@@ -25,7 +23,6 @@ int main(void) {
     const char* emp_path = "data/employees.csv";
     const char* pay_path = "data/payroll.csv";
 
-    /* Create empty payroll CSV if it doesn't exist yet */
     FILE* pf = fopen(pay_path, "r");
     if (!pf) {
         pf = fopen(pay_path, "w");
@@ -42,7 +39,6 @@ int main(void) {
         fclose(pf);
     }
 
-    /* Load employees from CSV */
     Employee employees[MAX_EMPLOYEES];
     int emp_count = csv_load_employees(emp_path, employees, MAX_EMPLOYEES);
 
@@ -53,7 +49,6 @@ int main(void) {
         return 1;
     }
 
-    /* Main loop — returns to login after every logout */
     for (;;) {
         emp_count = csv_load_employees(emp_path, employees, MAX_EMPLOYEES);
 

@@ -1,34 +1,26 @@
-/* ============================================================
-   PayDay | src/utils/CSVManager.c
-   ============================================================ */
 #include "CSVManager.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
-/* ── Internal: strip surrounding quotes and whitespace ──────── */
 static void strip(char* s) {
     if (!s || !*s) return;
-    /* trailing */
     int len = (int)strlen(s);
     while (len > 0 && (s[len-1] == '\r' || s[len-1] == '\n' ||
                        s[len-1] == ' '  || s[len-1] == '"')) {
         s[--len] = '\0';
     }
-    /* leading */
     char* p = s;
     while (*p == ' ' || *p == '"') p++;
     if (p != s) memmove(s, p, strlen(p) + 1);
 }
 
-/* ── Internal: parse one CSV line into tokens ───────────────── */
 static int parse_csv_line(char* line, char** tokens, int max_tok) {
     int n = 0;
     char* p = line;
     while (*p && n < max_tok) {
         tokens[n++] = p;
-        /* find next comma (skip quoted fields) */
         int in_quote = 0;
         while (*p) {
             if (*p == '"') in_quote = !in_quote;
@@ -36,12 +28,9 @@ static int parse_csv_line(char* line, char** tokens, int max_tok) {
             p++;
         }
     }
-    /* strip each token */
     for (int i = 0; i < n; i++) strip(tokens[i]);
     return n;
 }
-
-/* ── Employee CSV ───────────────────────────────────────────── */
 
 int csv_load_employees(const char* path, Employee* out, int max) {
     FILE* f = fopen(path, "r");
@@ -104,8 +93,6 @@ int csv_next_employee_id(const Employee* arr, int count) {
         if (arr[i].id > max) max = arr[i].id;
     return max + 1;
 }
-
-/* ── Payroll CSV ────────────────────────────────────────────── */
 
 int csv_load_payroll(const char* path, PayrollRecord* out, int max) {
     FILE* f = fopen(path, "r");
@@ -182,7 +169,6 @@ int csv_next_payroll_id(const PayrollRecord* arr, int count) {
     return max + 1;
 }
 
-/* ── Date helper ────────────────────────────────────────────── */
 void csv_today(char* buf, int buflen) {
     time_t t = time(NULL);
     struct tm* tm = localtime(&t);
