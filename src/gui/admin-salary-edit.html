@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match-a-Bank | Calculate Salary Edit</title>
+    <link rel="stylesheet" href="css/admin-salary-edit.css">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo-section">
+                <img src="images/logo.png" alt="Match-a-Bank Logo" class="app-logo">
+                <h1>Match-a-Bank</h1>
+            </div>
+
+            <nav class="nav-menu">
+        <a href="admin-employee-dashboard.html" class="nav-btn">Employees</a>
+        <a href="admin-salary-search.html" class="nav-btn active">Calculate Salary</a>
+        <a href="admin-payroll-records.html" class="nav-btn">Payroll Records</a>
+        <a href="admin-payroll-report.html" class="nav-btn">Payroll Report</a>
+        <div class="spacer"></div>
+        <a href="index.html" class="nav-btn logout">Logout</a>
+    </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="salary-header">
+                <h2>Calculate Payroll For:</h2>
+            </div>
+            
+            <section class="search-section">
+                <div class="search-wrapper">
+                    <input type="text" class="search-input" value="Heart Bhea Conserva">
+                </div>
+            </section>
+
+            <div class="employee-info-bar">
+                <span>Heart Bhea Conserva</span>
+                <span>Base: PHP 20000.00</span>
+                <span>Rate: PHP 150.00/hr</span>
+            </div>
+
+            <section class="form-container">
+                <form class="payroll-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Period Start</label>
+                            <input type="text" placeholder="Value">
+                        </div>
+                        <div class="form-group">
+                            <label>Period End</label>
+                            <input type="text" placeholder="Value">
+                        </div>
+                        <div class="form-group">
+                            <label>Overtime hours (0 if none)</label>
+                            <input type="text" placeholder="Value">
+                        </div>
+                        <div class="form-group">
+                            <label>Additional deductions (PHP) :</label>
+                            <input type="text" placeholder="Value">
+                        </div>
+                    </div>
+
+                   <div class="form-actions">
+    <a href="admin-salary-report.html" style="text-decoration: none;">
+        <button type="button" class="calc-btn">Calculate</button>
+    </a>
+    <button type="button" class="cancel-btn">Cancel</button>
+</div>
+                </form>
+            </section>
+        </main>
+    </div>
+
+</body>
+</html>

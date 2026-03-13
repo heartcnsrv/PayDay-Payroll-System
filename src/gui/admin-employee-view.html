@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match-a-Bank | Admin View</title>
+    <link rel="stylesheet" href="css/admin-employee-view.css">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo-section">
+                <img src="images/logo.png" alt="Match-a-Bank Logo" class="app-logo">
+                <h1>Match-a-Bank</h1>
+            </div>
+
+            <nav class="nav-menu">
+        <a href="admin-employee-dashboard.html" class="nav-btn active">Employees</a>
+        <a href="admin-salary-search.html" class="nav-btn">Calculate Salary</a>
+        <a href="admin-payroll-records.html" class="nav-btn">Payroll Records</a>
+        <a href="admin-payroll-report.html" class="nav-btn">Payroll Report</a>
+        <div class="spacer"></div>
+        <a href="index.html" class="nav-btn logout">Logout</a>
+    </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <div class="action-tabs">
+    <a href="admin-employee-view.html" class="tab-btn active">View Employees</a>
+    <a href="admin-employee-add.html" class="tab-btn">Add Employee</a>
+    <a href="admin-employee-edit-search.html" class="tab-btn">Edit Employee</a>
+    <a href="admin-employee-deactivate-search.html" class="tab-btn">Deactivate Employee</a>
+</div>
+            </header>
+
+            <section class="table-section">
+                <table class="employee-table">
+                    <thead>
+                        <tr>
+                            <th># ID <span>▾</span></th>
+                            <th>Full Name <span>▾</span></th>
+                            <th>Department <span>▾</span></th>
+                            <th>Position <span>▾</span></th>
+                            <th>Base Salary <span>▾</span></th>
+                            <th>Role <span>▾</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>Heart Bhea Conserva</td><td>Administration</td><td>Admin</td><td>50,000.00</td><td>1</td></tr>
+                        <tr><td>2</td><td>Angel Bless Consolacion</td><td>Administration</td><td>Admin</td><td>50,000.00</td><td>1</td></tr>
+                        <tr><td>3</td><td>Eryle Delos Santos</td><td>Accounting</td><td>Accountant</td><td>35,000.00</td><td>1</td></tr>
+                        <tr><td>4</td><td>John Michael Garcia</td><td>Accounting</td><td>Accountant</td><td>35,000.00</td><td>1</td></tr>
+                        <tr><td>5</td><td>Francis CJ Quitaneg</td><td>Sales</td><td>Representative</td><td>25,000.00</td><td>1</td></tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+</body>
+</html>

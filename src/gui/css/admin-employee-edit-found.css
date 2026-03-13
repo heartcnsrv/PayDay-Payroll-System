@@ -1,0 +1,106 @@
+:root {
+    --bg-cream: #fffbef;
+    --forest-green: #4d634d;
+    --active-tan: #a68b5b;
+    --text-main: #2c362c;
+    --shadow: 0 4px 8px rgba(0,0,0,0.12);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body, html {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-cream);
+}
+
+.app-container { display: flex; width: 100vw; height: 100vh; }
+
+/* Sidebar */
+.sidebar { width: 300px; padding: 50px 30px; display: flex; flex-direction: column; }
+.logo-section { text-align: center; margin-bottom: 50px; }
+.app-logo { width: 120px; height: auto; margin-bottom: 10px; }
+.logo-section h1 { font-family: 'Crimson Pro', serif; font-size: 24px; color: var(--text-main); }
+
+.nav-menu { display: flex; flex-direction: column; gap: 15px; height: 100%; }
+.nav-btn {
+    padding: 15px 25px;
+    border-radius: 50px;
+    border: none;
+    background-color: var(--forest-green);
+    color: white;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+}
+.nav-btn.active { background-color: var(--active-tan); }
+.spacer { flex-grow: 1; }
+
+/* Main Content */
+.main-content { flex: 1; padding: 40px 60px; overflow-y: auto; }
+
+.action-tabs { display: flex; gap: 15px; margin-bottom: 30px; }
+.tab-btn {
+    padding: 12px 25px;
+    border-radius: 50px;
+    border: none;
+    background-color: var(--forest-green);
+    color: white;
+    font-family: 'Crimson Pro', serif;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+}
+.tab-btn.active { background-color: var(--active-tan); }
+
+/* Search Results Styling */
+.search-section { margin-bottom: 25px; }
+.search-wrapper { display: flex; align-items: center; gap: 15px; max-width: 800px; margin-bottom: 10px; }
+.search-input { flex: 1; padding: 10px 20px; border-radius: 8px; border: 1px solid #ccc; outline: none; }
+
+.result-text {
+    font-family: 'Crimson Pro', serif;
+    color: #b59b6d; /* Golden/Tan color from screenshot */
+    font-size: 1.4rem;
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+}
+
+/* Form Grid */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 60px;
+    row-gap: 15px;
+    max-width: 900px;
+}
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group label { font-size: 0.9rem; color: #333; font-weight: 500; }
+.form-group input { padding: 10px 15px; border-radius: 8px; border: 1px solid #eee; background-color: #fff; }
+
+/* Bottom Action Buttons */
+.form-actions {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    max-width: 900px;
+}
+
+.edit-btn, .cancel-btn {
+    width: 180px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.2);
+    background-color: var(--forest-green); /* Green buttons in this view */
+    color: white;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+}
+
+.edit-btn:hover, .cancel-btn:hover { filter: brightness(1.2); }

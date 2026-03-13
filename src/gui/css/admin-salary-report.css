@@ -1,0 +1,115 @@
+:root {
+    --bg-cream: #fffbef;
+    --forest-green: #4d634d;
+    --active-tan: #a68b5b;
+    --text-main: #2c362c;
+    --border-color: #e0e0e0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body, html {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-cream);
+}
+
+.app-container { display: flex; width: 100vw; height: 100vh; }
+
+/* Sidebar */
+.sidebar { width: 300px; padding: 50px 30px; display: flex; flex-direction: column; }
+.logo-section { text-align: center; margin-bottom: 50px; }
+.app-logo { width: 120px; height: auto; margin-bottom: 10px; }
+.logo-section h1 { font-family: 'Crimson Pro', serif; font-size: 24px; color: var(--text-main); }
+
+.nav-menu { display: flex; flex-direction: column; gap: 15px; height: 100%; }
+.nav-btn {
+    padding: 15px 25px;
+    border-radius: 50px;
+    border: none;
+    background-color: var(--forest-green);
+    color: white;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.2rem;
+}
+.nav-btn.active { background-color: var(--active-tan); }
+.spacer { flex-grow: 1; }
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.salary-header h2 {
+    font-family: 'Crimson Pro', serif;
+    font-size: 2.2rem;
+    color: var(--active-tan);
+    margin-bottom: 20px;
+}
+
+.search-section { width: 100%; max-width: 800px; margin-bottom: 30px; }
+.search-input {
+    width: 100%;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 0.95rem;
+}
+
+/* Report Table Styling */
+.report-container { width: 100%; max-width: 800px; background: white; padding: 1px; border: 1px solid var(--border-color); }
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Inter', sans-serif;
+}
+
+.report-table th, .report-table td {
+    border: 1px solid var(--border-color);
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 0.95rem;
+}
+
+.emp-name-header { font-weight: 700; text-align: left; }
+.period-row { font-weight: 500; }
+
+.amount { text-align: right; width: 150px; }
+
+.highlight-row { background-color: #fafafa; }
+
+.net-pay-row td {
+    padding: 20px 15px;
+    font-size: 1.1rem;
+}
+
+/* Action Buttons */
+.form-actions {
+    margin: 40px 0;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.save-btn, .cancel-btn {
+    width: 200px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.2);
+    background-color: var(--active-tan);
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.save-btn:hover, .cancel-btn:hover { filter: brightness(0.9); }

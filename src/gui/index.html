@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Match-a-Bank</title>
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="card" aria-label="Login">
+        <div class="brand">
+          <div class="brand__logo-wrap">
+            <img
+              class="brand__logo"
+              src="./images/logo.png"
+              alt="Match-a-Bank logo"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
+          <h1 class="brand__name">Match-a-Bank</h1>
+        </div>
+
+        <form class="form" autocomplete="on">
+          <div class="form__row">
+            <label class="field">
+              <span class="field__label">Username</span>
+              <input
+                class="field__input"
+                type="text"
+                name="username"
+                placeholder="Value"
+                autocomplete="username"
+              />
+            </label>
+
+            <label class="field">
+              <span class="field__label">Password</span>
+              <input
+                class="field__input"
+                type="password"
+                name="password"
+                placeholder="Value"
+                autocomplete="current-password"
+              />
+            </label>
+          </div>
+
+          <button class="btn" type="submit">Sign In</button>
+
+          <p class="footer">
+            <span>Don’t have an account?</span>
+            <a class="footer__link" href="sign-in.html">Sign up</a>
+          </p>
+        </form>
+      </section>
+    </main>
+
+    <script src="./js/app.js" defer></script>
+  </body>
+</html>

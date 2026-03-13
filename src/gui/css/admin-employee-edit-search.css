@@ -1,0 +1,108 @@
+:root {
+    --bg-cream: #fffbef;
+    --forest-green: #4d634d;
+    --active-tan: #a68b5b;
+    --text-main: #2c362c;
+    --shadow: 0 4px 8px rgba(0,0,0,0.12);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body, html {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-cream);
+}
+
+.app-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 300px;
+    padding: 50px 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-section { text-align: center; margin-bottom: 50px; }
+.app-logo { width: 120px; height: auto; margin-bottom: 10px; }
+.logo-section h1 { font-family: 'Crimson Pro', serif; font-size: 24px; color: var(--text-main); }
+
+.nav-menu { display: flex; flex-direction: column; gap: 15px; height: 100%; }
+.nav-btn {
+    padding: 15px 25px;
+    border-radius: 50px;
+    border: none;
+    background-color: var(--forest-green);
+    color: white;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.2rem;
+    cursor: pointer;
+    text-align: left;
+    box-shadow: var(--shadow);
+}
+.nav-btn.active { background-color: var(--active-tan); }
+.spacer { flex-grow: 1; }
+
+/* Main Content Area */
+.main-content { flex: 1; padding: 60px 50px; }
+
+.action-tabs { display: flex; gap: 15px; margin-bottom: 40px; }
+.tab-btn {
+    padding: 12px 25px;
+    border-radius: 50px;
+    border: none;
+    background-color: var(--forest-green);
+    color: white;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+}
+.tab-btn.active { background-color: var(--active-tan); }
+
+/* Search Bar Styling */
+.search-section {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.search-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 800px; /* Adjust based on preference */
+    gap: 15px;
+}
+
+.search-icon {
+    color: #000;
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    flex: 1;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: white;
+    font-size: 1rem;
+    color: #666;
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: #bbb;
+}
+
+.search-input:focus {
+    border-color: var(--active-tan);
+}

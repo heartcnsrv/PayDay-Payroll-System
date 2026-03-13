@@ -1,0 +1,122 @@
+:root {
+    --bg-cream: #fffbef; /* Updated background color */
+    --forest-green: #4d634d;
+    --active-tan: #a68b5b;
+    --text-main: #2c362c;
+    --shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+}
+
+.app-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-cream);
+}
+
+/* Sidebar */
+.sidebar {
+    width: 300px;
+    padding: 50px 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-section {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.app-logo {
+    width: 130px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.logo-section h1 {
+    font-family: 'Crimson Pro', serif;
+    font-size: 24px;
+    color: var(--text-main);
+    letter-spacing: 0.5px;
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 100%;
+}
+
+.nav-btn {
+    padding: 18px 25px;
+    border-radius: 50px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background-color: var(--forest-green);
+    color: white;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.25rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow);
+}
+
+.nav-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.nav-btn.active {
+    background-color: var(--active-tan);
+}
+
+.spacer { flex-grow: 1; }
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    padding: 60px 40px;
+}
+
+.top-nav {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.action-tabs {
+    display: flex;
+    gap: 20px;
+}
+
+.tab-btn {
+    padding: 15px 30px;
+    border-radius: 50px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background-color: var(--forest-green);
+    color: white;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: 0.2s;
+}
+
+.tab-btn:hover {
+    background-color: #5d755d;
+    transform: translateY(-2px);
+}
+
+/* Specific to dashboard view: 
+   buttons here aren't active yet per your image */

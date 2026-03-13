@@ -1,0 +1,153 @@
+:root {
+    --bg-cream: #fffbef;
+    --forest-green: #4d634d;
+    --active-tan: #a68b5b;
+    --table-header: #3e4a3e;
+    --text-main: #2c362c;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    width: 100%;
+    overflow: hidden; /* Prevents double scrollbars */
+    font-family: 'Inter', sans-serif;
+}
+
+.app-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-cream);
+}
+
+/* Sidebar - Fixed width, full height */
+.sidebar {
+    width: 300px;
+    background-color: var(--bg-cream);
+    padding: 50px 30px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(0,0,0,0.05);
+}
+
+.logo-section {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.app-logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+.logo-section h1 {
+    font-family: 'Crimson Pro', serif;
+    font-size: 26px;
+    color: var(--text-main);
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 100%;
+}
+
+.nav-btn {
+    padding: 15px 25px;
+    border-radius: 50px;
+    border: none;
+    background-color: var(--forest-green);
+    color: white;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.2rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.nav-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.nav-btn.active {
+    background-color: var(--active-tan);
+}
+
+.spacer { flex-grow: 1; } /* Pushes Logout to the bottom */
+
+/* Main Content - Takes up remaining space */
+.main-content {
+    flex: 1;
+    padding: 60px;
+    overflow-y: auto;
+}
+
+.action-tabs {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.tab-btn {
+    padding: 12px 28px;
+    border-radius: 50px;
+    border: none;
+    background-color: var(--forest-green);
+    color: white;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: 0.2s;
+}
+
+.tab-btn:hover { background-color: #5d755d; }
+.tab-btn.active { background-color: var(--active-tan); }
+
+/* Table Styling */
+.table-section {
+    width: 100%;
+    background: transparent;
+}
+
+.employee-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+}
+
+.employee-table thead tr {
+    background-color: var(--table-header);
+    color: white;
+}
+
+.employee-table th {
+    padding: 15px;
+    text-align: left;
+    font-weight: 500;
+}
+
+.employee-table th span {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.employee-table td {
+    padding: 15px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    color: #444;
+}
+
+.employee-table tbody tr:hover {
+    background-color: rgba(0,0,0,0.03);
+}
