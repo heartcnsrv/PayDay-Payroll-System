@@ -30,8 +30,9 @@
                 class="field__input"
                 type="text"
                 name="username"
-                placeholder="Value"
+                placeholder="Input your username"
                 autocomplete="username"
+                required
               />
             </label>
 
@@ -41,8 +42,9 @@
                 class="field__input"
                 type="password"
                 name="password"
-                placeholder="Value"
+                placeholder="Input your password"
                 autocomplete="current-password"
+                required
               />
             </label>
           </div>
@@ -56,6 +58,8 @@
         </form>
       </section>
     </main>
+
+    <div id="login-error" class="form__error" aria-live="polite"></div>
 
     <script src="./js/app.js" defer></script>
   </body>

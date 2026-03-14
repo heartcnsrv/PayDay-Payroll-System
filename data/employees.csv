@@ -4,4 +4,7 @@ id,username,password,full_name,department,position,base_salary,hourly_rate,email
 3,"eryle","123","Eryle Delos Santos","Accounting","Accountant",30000.00,150.00,"eryle@payday.com","09222222222","2025-03-05",1,1
 4,"angel","123","Angel Consolacion","Human Resources","HR Officer",28000.00,140.00,"angel@payday.com","09333333333","2025-03-05",1,1
 5,"kael","123","Kael Garcia","Engineering","Junior Developer",25000.00,125.00,"kael@payday.com","09444444444","2025-03-05",1,1
-6,"cj","123","CJ Quitaneg","Sales","Sales Representative",27000.00,135.00,"cj@payday.com","09555555555","2025-03-05",1,1
+6,"cj","123","CJ Quitaneg","Sales","Sales Representative",27000.00,135.00,"cj@payday.com","09555555555","2025-03-05",1,0
+7,"asd","asdasdasd","asdasd","asdasdasd","asdasd",0.03,0.03,"asdasd@slu.edu.ph","asdasd","asdasd",1,0
+8,"Ivory","123123","Ivory Pearl","Marketing","Head",123.00,123.00,"Ivory@gmail.com","091238958","2005-19-12",1,0
+9,"weh","weh","weh","weh","weh",123.00,123.00,"weh@gmail","weh","123123123",1,0

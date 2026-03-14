@@ -119,3 +119,18 @@ body, html {
 }
 
 .calc-btn:hover, .cancel-btn:hover { filter: brightness(1.1); }
+
+/* Messages */
+.message {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.message.is-error {
+    background-color: #fee;
+    color: #c33;
+    border: 1px solid #fcc;
+}
