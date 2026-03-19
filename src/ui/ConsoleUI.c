@@ -29,6 +29,11 @@
 #include <string.h>
 #include <ctype.h>
 
+/*
+ * Console workflow layer.
+ * It does not own persistence itself; instead it calls CSVManager whenever a
+ * user action should read or save Employee/PayrollRecord structs.
+ */
 #ifdef _WIN32
   #include <windows.h>
   #define CLEAR "cls"
@@ -106,6 +111,7 @@ static int confirm_yn(const char* msg) {
 }
 
 void screen_forgot_password(Employee* employees, int count, const char* emp_path) {
+    /* Finds the matching Employee struct, updates its password, then saves CSV. */
     phdr("Forgot Password", "Reset your password using your email");
 
     char username[64], email[128];
@@ -154,6 +160,7 @@ void screen_forgot_password(Employee* employees, int count, const char* emp_path
 
 void screen_login(Employee* out, Employee* employees, int count,
                   const char* emp_path) {
+    /* Authentication is a scan over the loaded Employee struct array. */
     char username[64], password[64];
     for (;;) {
         phdr("Login", "Sign in to PayDay");
@@ -207,6 +214,7 @@ void screen_employee_list(Employee* employees, int count) {
 void screen_add_employee(Employee* employees, int* count, const char* path) {
     phdr("Add Employee", "Create a new account");
 
+    /* Build a new Employee struct from console input before saving it. */
     Employee e;
     memset(&e, 0, sizeof(e));
     e.id     = csv_next_employee_id(employees, *count);
@@ -344,6 +352,7 @@ void screen_deactivate_emp(Employee* employees, int count, const char* path) {
 }
 
 void screen_calc_payroll(Employee* emp, const char* pay_path) {
+    /* Convert one Employee struct into a PayrollRecord, then persist it. */
     char sub[160];
     snprintf(sub, sizeof(sub), "%s  |  Base: PHP %.2f  |  Rate: PHP %.2f/hr",
              emp->full_name, emp->base_salary, emp->hourly_rate);
@@ -369,6 +378,7 @@ void screen_calc_payroll(Employee* emp, const char* pay_path) {
     PayrollRecord rec;
     payroll_calculate(&rec, emp, ps, pe, ot, other, NULL);
 
+    /* Load existing payroll rows so the new record can get an ID and be saved. */
     PayrollRecord payroll[MAX_PAYROLL];
     int pay_count = csv_load_payroll(pay_path, payroll, MAX_PAYROLL);
     rec.id = csv_next_payroll_id(payroll, pay_count);
@@ -409,6 +419,7 @@ void screen_calc_payroll(Employee* emp, const char* pay_path) {
 
 void screen_payslip(int payroll_id, Employee* employees, int emp_count,
                     const char* pay_path) {
+    /* Reads payroll rows, finds one record, then joins back to employee details. */
     PayrollRecord payroll[MAX_PAYROLL];
     int pay_count = csv_load_payroll(pay_path, payroll, MAX_PAYROLL);
 
@@ -465,6 +476,7 @@ void screen_payslip(int payroll_id, Employee* employees, int emp_count,
 }
 
 void screen_release_payroll(Employee* employees, int emp_count, const char* pay_path) {
+    /* Marks a saved payroll record as released, then rewrites payroll.csv. */
     PayrollRecord payroll[MAX_PAYROLL];
     int pay_count = csv_load_payroll(pay_path, payroll, MAX_PAYROLL);
 
@@ -508,6 +520,7 @@ void screen_release_payroll(Employee* employees, int emp_count, const char* pay_
 void screen_payroll_list(int filter_emp_id, Employee* employees, int emp_count,
                          const char* pay_path) {
     for (;;) {
+        /* Refresh from disk each time so the list reflects the latest CSV data. */
         PayrollRecord payroll[MAX_PAYROLL];
         int pay_count = csv_load_payroll(pay_path, payroll, MAX_PAYROLL);
 
@@ -557,6 +570,7 @@ void screen_payroll_list(int filter_emp_id, Employee* employees, int emp_count,
 }
 
 void screen_report(Employee* employees, int emp_count, const char* pay_path) {
+    /* Aggregates saved payroll structs into a console summary report. */
     PayrollRecord payroll[MAX_PAYROLL];
     int pay_count = csv_load_payroll(pay_path, payroll, MAX_PAYROLL);
 
@@ -597,6 +611,7 @@ void screen_report(Employee* employees, int emp_count, const char* pay_path) {
 
 void screen_admin_menu(Employee* admin, Employee* employees, int* emp_count,
                        const char* emp_path, const char* pay_path) {
+    /* Main admin process controller for employee and payroll workflows. */
     for (;;) {
         phdr("Admin Panel", admin->full_name);
         printf(WHT "  [1]" R "  Employee List\n");
@@ -642,12 +657,14 @@ void screen_admin_menu(Employee* admin, Employee* employees, int* emp_count,
         else if (ch[0]=='0') break;
 
         reload:
+        /* After every action, reload employees.csv so later screens use fresh data. */
         *emp_count = csv_load_employees(emp_path, employees, MAX_EMPLOYEES);
     }
 }
 
 void screen_employee_menu(Employee* emp, const char* pay_path,
                           Employee* employees, int emp_count) {
+    /* Employee users only navigate their own saved payroll history. */
     for (;;) {
         phdr("Employee Portal", emp->full_name);
         printf(GRY "  %s  ·  %s  ·  Base: PHP %.2f\n\n" R,

@@ -17,6 +17,13 @@
 #include <string.h>
 #include <ctype.h>
 
+/*
+ * HTTP/API layer for the GUI frontend.
+ *
+ * Database note:
+ * This project does not use MySQL/SQLite/PostgreSQL. Each route loads CSV data
+ * into C struct arrays, works on those arrays, then saves the full CSV file.
+ */
 #ifdef _WIN32
   #pragma comment(lib, "ws2_32.lib")
   #include <process.h>
@@ -30,8 +37,10 @@
   #define THREAD_RET  return NULL
 #endif
 
+/* Base folder that route handlers use to locate employees.csv and payroll.csv. */
 char g_data_dir[512] = "data";
 
+/* Temporary in-memory reset state; this is not persisted to the CSV "database". */
 static char g_reset_username[64] = {0};
 static char g_reset_token[16]    = {0};
 
@@ -44,6 +53,7 @@ static void send_all(sock_t fd, const char* data, int len) {
     }
 }
 
+/* Per-client context passed into the worker thread. */
 typedef struct { sock_t fd; } ClientArgs;
 
 static THREAD_FUNC handle_client(void* arg) {
@@ -54,6 +64,7 @@ static THREAD_FUNC handle_client(void* arg) {
     char buf[65536];
     int  total = 0;
 
+    /* Read the whole HTTP request, including the JSON body. */
     while (total < (int)sizeof(buf) - 1) {
         int n = (int)recv(fd, buf + total, (int)sizeof(buf) - 1 - total, 0);
         if (n <= 0) break;
@@ -115,6 +126,7 @@ static THREAD_FUNC handle_client(void* arg) {
     char* hdr_end = strstr(buf, "\r\n\r\n");
     const char* body = hdr_end ? hdr_end + 4 : "";
 
+    /* After parsing HTTP, hand the request to the application router. */
     char* result = server_dispatch(path, body);
     RESPOND(result);
 
@@ -145,6 +157,7 @@ void server_run(int port) {
     listen(srv, 128);
     printf("[PayDay] C backend listening on port %d\n", port);
 
+    /* Each accepted socket is processed in its own thread. */
     for (;;) {
         sock_t client = accept(srv, NULL, NULL);
         if (client == SOCK_INVALID_VAL) continue;
@@ -163,6 +176,7 @@ void server_run(int port) {
 }
 
 char* server_dispatch(const char* path, const char* body) {
+    /* Request switchboard for the CSV-backed application features. */
     if (strncmp(path, "/auth",      5) == 0) return route_auth(body);
     if (strncmp(path, "/employees", 10)== 0) return route_employees(body);
     if (strncmp(path, "/payroll",   8) == 0) return route_payroll(body);
@@ -179,10 +193,12 @@ char* route_auth(const char* body) {
     char path[512];
     snprintf(path, sizeof(path), "%s/employees.csv", g_data_dir);
 
+    /* Load employees.csv before authentication-related checks. */
     Employee employees[MAX_EMPLOYEES];
     int count = csv_load_employees(path, employees, MAX_EMPLOYEES);
 
     if (strcmp(action, "login") == 0) {
+        /* Login scans the loaded Employee structs for a matching active user. */
         for (int i = 0; i < count; i++) {
             Employee* e = &employees[i];
             if (!e->active) continue;
@@ -242,6 +258,7 @@ char* route_auth(const char* body) {
             if (strcmp(employees[i].username, username) == 0) {
                 strncpy(employees[i].password, new_pass,
                         sizeof(employees[i].password)-1);
+                /* Save the edited employee array back to employees.csv. */
                 csv_save_employees(path, employees, count);
                 g_reset_token[0]    = '\0';
                 g_reset_username[0] = '\0';
@@ -261,10 +278,12 @@ char* route_employees(const char* body) {
     char path[512];
     snprintf(path, sizeof(path), "%s/employees.csv", g_data_dir);
 
+    /* Employee CRUD works by loading the whole CSV file into structs first. */
     Employee employees[MAX_EMPLOYEES];
     int count = csv_load_employees(path, employees, MAX_EMPLOYEES);
 
     if (strcmp(action, "list") == 0) {
+        /* Convert active Employee structs into JSON for the frontend. */
         char* arr = (char*)malloc(65536);
         strcpy(arr, "[");
         int first = 1;
@@ -328,6 +347,7 @@ char* route_employees(const char* body) {
     if (strcmp(action, "add") == 0) {
         Employee e;
         memset(&e, 0, sizeof(e));
+        /* Build one new Employee struct from the incoming request body. */
         e.id = csv_next_employee_id(employees, count);
         json_get_str(body, "username",   e.username,   sizeof(e.username));
         json_get_str(body, "password",   e.password,   sizeof(e.password));
@@ -353,6 +373,7 @@ char* route_employees(const char* body) {
         if (!payroll_validate_employee(&e, err_msg, sizeof(err_msg)))
             return json_err(err_msg);
 
+        /* Append to the in-memory array, then rewrite employees.csv. */
         employees[count++] = e;
         csv_save_employees(path, employees, count);
 
@@ -366,6 +387,7 @@ char* route_employees(const char* body) {
         for (int i = 0; i < count; i++) {
             if (employees[i].id == id) {
                 Employee* e = &employees[i];
+                /* Only fields provided in JSON are copied into the struct. */
                 char tmp[128];
                 if (json_get_str(body, "full_name",  tmp, sizeof(tmp)) && tmp[0])
                     strncpy(e->full_name,  tmp, sizeof(e->full_name)-1);
@@ -395,6 +417,7 @@ char* route_employees(const char* body) {
         int id = json_get_int(body, "id", 0);
         for (int i = 0; i < count; i++) {
             if (employees[i].id == id) {
+                /* Soft-delete: keep the row, but block it from active use. */
                 employees[i].active = 0;
                 csv_save_employees(path, employees, count);
                 return json_ok("\"message\":\"Employee deactivated.\"");
@@ -414,6 +437,10 @@ char* route_payroll(const char* body) {
     snprintf(emp_path, sizeof(emp_path), "%s/employees.csv", g_data_dir);
     snprintf(pay_path, sizeof(pay_path), "%s/payroll.csv",   g_data_dir);
 
+    /*
+     * Payroll operations use two CSV-backed datasets:
+     * employees[] for employee master data and payroll[] for saved payroll rows.
+     */
     Employee      employees[MAX_EMPLOYEES];
     PayrollRecord payroll[MAX_PAYROLL];
     int emp_count = csv_load_employees(emp_path, employees, MAX_EMPLOYEES);
@@ -427,15 +454,18 @@ char* route_payroll(const char* body) {
         json_get_str(body, "period_start", ps, sizeof(ps));
         json_get_str(body, "period_end",   pe, sizeof(pe));
 
+        /* Resolve employee_id from the request back to an Employee struct. */
         Employee* emp = NULL;
         for (int i = 0; i < emp_count; i++)
             if (employees[i].id == emp_id) { emp = &employees[i]; break; }
         if (!emp) return json_err("Employee not found.");
 
+        /* Compute one new payroll row in memory before saving it. */
         PayrollRecord rec;
         payroll_calculate(&rec, emp, ps, pe, ot_hours, other_ded, NULL);
         rec.id = csv_next_payroll_id(payroll, pay_count);
 
+        /* Append the generated record and rewrite payroll.csv. */
         payroll[pay_count++] = rec;
         csv_save_payroll(pay_path, payroll, pay_count);
 
@@ -461,6 +491,7 @@ char* route_payroll(const char* body) {
     }
 
     if (strcmp(action, "list") == 0) {
+        /* Optional filter for employee-specific history. */
         int filter_id = json_get_int(body, "employee_id", 0);
         char* arr = (char*)malloc(131072);
         strcpy(arr, "[");
@@ -470,6 +501,7 @@ char* route_payroll(const char* body) {
             PayrollRecord* p = &payroll[i];
             if (filter_id > 0 && p->employee_id != filter_id) continue;
 
+            /* Manual join: match PayrollRecord.employee_id to Employee.id. */
             const char* emp_name = "";
             for (int j = 0; j < emp_count; j++)
                 if (employees[j].id == p->employee_id) {
@@ -540,6 +572,7 @@ char* route_payroll(const char* body) {
         int id = json_get_int(body, "id", 0);
         for (int i = 0; i < pay_count; i++) {
             if (payroll[i].id == id) {
+                /* Status change is persisted by saving the whole payroll array. */
                 strncpy(payroll[i].status, "released", sizeof(payroll[i].status)-1);
                 csv_save_payroll(pay_path, payroll, pay_count);
                 return json_ok("\"message\":\"Payroll released.\"");
@@ -560,6 +593,7 @@ char* route_report(const char* body) {
     snprintf(emp_path, sizeof(emp_path), "%s/employees.csv", g_data_dir);
     snprintf(pay_path, sizeof(pay_path), "%s/payroll.csv",   g_data_dir);
 
+    /* Reports are built entirely from the struct arrays loaded from CSV. */
     Employee      employees[MAX_EMPLOYEES];
     PayrollRecord payroll[MAX_PAYROLL];
     int emp_count = csv_load_employees(emp_path, employees, MAX_EMPLOYEES);
@@ -577,6 +611,7 @@ char* route_report(const char* body) {
         if (ps[0] && strcmp(p->period_start, ps) < 0) continue;
         if (pe[0] && strcmp(p->period_end,   pe) > 0) continue;
 
+        /* Another manual join between payroll rows and employee master data. */
         const char* emp_name = "Unknown";
         const char* dept     = "";
         for (int j = 0; j < emp_count; j++)
@@ -621,6 +656,7 @@ char* route_report(const char* body) {
 
 
 char* json_get_str(const char* json, const char* key, char* out, int outlen) {
+    /* Small JSON helper used instead of linking a full JSON parser library. */
     out[0] = '\0';
     if (!json || !key) return out;
     char needle[128];
@@ -671,6 +707,7 @@ double json_get_dbl(const char* json, const char* key, double def) {
 }
 
 char* json_escape(const char* s, char* out, int outlen) {
+    /* Escapes struct string fields before sending them back as JSON text. */
     int i = 0, j = 0;
     while (s[i] && j < outlen-2) {
         switch (s[i]) {

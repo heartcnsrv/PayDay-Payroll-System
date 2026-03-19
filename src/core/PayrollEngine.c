@@ -6,11 +6,13 @@
 #include <stdlib.h>
 #include <time.h>
 
+/* Overtime pay is based on rate, hours, and overtime multiplier. */
 double payroll_overtime_pay(double hourly_rate, double hours, double multiplier) {
     if (hours <= 0.0) return 0.0;
     return hourly_rate * hours * multiplier;
 }
 
+/* Percentage-based deductions applied to gross pay. */
 double payroll_tax(double gross, double rate) {
     return gross * rate;
 }
@@ -28,6 +30,10 @@ double payroll_net(double gross, double total_deductions) {
     return net < 0.0 ? 0.0 : net;
 }
 
+/*
+ * Converts one Employee struct into one PayrollRecord struct.
+ * The caller usually saves the finished record through CSVManager.
+ */
 void payroll_calculate(
     PayrollRecord*        out,
     const Employee*       emp,
@@ -49,6 +55,7 @@ void payroll_calculate(
 
     memset(out, 0, sizeof(*out));
 
+    /* Copy the employee identity/salary snapshot into the payroll record. */
     out->employee_id    = emp->id;
     out->base_salary    = emp->base_salary;
 
@@ -62,6 +69,7 @@ void payroll_calculate(
 
     out->gross_pay      = emp->base_salary + out->overtime_pay;
 
+    /* Once gross pay is known, the deduction fields can be computed. */
     out->tax_deduction         = payroll_tax(out->gross_pay, r.tax_rate);
     out->sss_deduction         = payroll_sss(out->gross_pay, r.sss_rate);
     out->philhealth_deduction  = payroll_philhealth(out->gross_pay, r.philhealth_rate);
@@ -76,11 +84,13 @@ void payroll_calculate(
 
     out->net_pay = payroll_net(out->gross_pay, out->total_deductions);
 
+    /* Metadata used later by reports, payslips, and release actions. */
     csv_today(out->generated_date, sizeof(out->generated_date));
     strncpy(out->status, "generated", sizeof(out->status)-1);
 }
 
 int payroll_validate_employee(const Employee* e, char* err_out, int err_len) {
+    /* Prevent invalid Employee structs from being written to employees.csv. */
     if (!e->username[0]) {
         snprintf(err_out, (size_t)err_len, "Username is required.");
         return 0;
@@ -109,6 +119,7 @@ int payroll_validate_employee(const Employee* e, char* err_out, int err_len) {
 }
 
 void payroll_generate_token(char* out, int len) {
+    /* Demo-only reset token generation for forgot-password flows. */
     srand((unsigned int)time(NULL));
     int code = (rand() % 900000) + 100000;
     snprintf(out, (size_t)len, "%d", code);

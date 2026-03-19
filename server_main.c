@@ -17,6 +17,11 @@
 #include <string.h>
 #include <signal.h>
 
+/*
+ * Server entry point.
+ * It prepares the CSV-backed storage, checks required files, then starts the
+ * HTTP backend that the browser frontend talks to through proxy.php.
+ */
 #ifdef _WIN32
   #include <direct.h>
   #define mkdir_compat(p) _mkdir(p)
@@ -32,6 +37,7 @@ static void on_signal(int s) {
 }
 
 static void ensure_payroll_header(void) {
+    /* Creates payroll.csv with the expected columns on first startup. */
     char path[512];
     snprintf(path, sizeof(path), "%.490s/payroll.csv", g_data_dir);
     FILE* f = fopen(path, "r");
@@ -55,6 +61,7 @@ int main(int argc, char* argv[]) {
     int port = 8081;
     if (argc > 1) port = atoi(argv[1]);
 
+    /* Share the storage directory with every route in HttpServer.c. */
     strncpy(g_data_dir, "data", sizeof(g_data_dir) - 1);
     mkdir_compat(g_data_dir);
     ensure_payroll_header();
@@ -79,6 +86,7 @@ int main(int argc, char* argv[]) {
     printf("   POST http://localhost:%d/report\n",    port);
     printf("[PayDay] Press Ctrl+C to stop.\n\n");
 
+    /* From this point on, requests are routed into CSV load/save operations. */
     server_run(port);
     return 0;
 }

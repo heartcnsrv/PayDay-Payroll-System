@@ -4,6 +4,7 @@
 #include <string.h>
 #include <time.h>
 
+/* Cleans one parsed CSV token before it is copied into a struct field. */
 static void strip(char* s) {
     if (!s || !*s) return;
     int len = (int)strlen(s);
@@ -16,6 +17,7 @@ static void strip(char* s) {
     if (p != s) memmove(s, p, strlen(p) + 1);
 }
 
+/* Splits one CSV row while keeping quoted commas inside the current field. */
 static int parse_csv_line(char* line, char** tokens, int max_tok) {
     int n = 0;
     char* p = line;
@@ -33,6 +35,7 @@ static int parse_csv_line(char* line, char** tokens, int max_tok) {
 }
 
 int csv_load_employees(const char* path, Employee* out, int max) {
+    /* Opens employees.csv and converts each row into an Employee struct. */
     FILE* f = fopen(path, "r");
     if (!f) return 0;
 
@@ -41,13 +44,14 @@ int csv_load_employees(const char* path, Employee* out, int max) {
     int  first = 1;
 
     while (fgets(line, sizeof(line), f) && count < max) {
-        if (first) { first = 0; continue; } /* skip header */
+        if (first) { first = 0; continue; } /* Skip the schema/header row. */
         char* tok[16];
         char  copy[1024];
         strncpy(copy, line, sizeof(copy)-1);
         int n = parse_csv_line(copy, tok, 16);
         if (n < 12) continue;
 
+        /* One CSV row becomes one in-memory Employee struct. */
         Employee* e = &out[count++];
         memset(e, 0, sizeof(*e));
         e->id           = atoi(tok[0]);
@@ -69,6 +73,7 @@ int csv_load_employees(const char* path, Employee* out, int max) {
 }
 
 int csv_save_employees(const char* path, const Employee* arr, int count) {
+    /* Rewrites the entire employee dataset back to employees.csv. */
     FILE* f = fopen(path, "w");
     if (!f) return 0;
     fprintf(f, "id,username,password,full_name,department,position,"
@@ -88,6 +93,7 @@ int csv_save_employees(const char* path, const Employee* arr, int count) {
 }
 
 int csv_next_employee_id(const Employee* arr, int count) {
+    /* Simulates auto-increment using the loaded employee array. */
     int max = 0;
     for (int i = 0; i < count; i++)
         if (arr[i].id > max) max = arr[i].id;
@@ -95,6 +101,7 @@ int csv_next_employee_id(const Employee* arr, int count) {
 }
 
 int csv_load_payroll(const char* path, PayrollRecord* out, int max) {
+    /* Opens payroll.csv and converts each row into a PayrollRecord struct. */
     FILE* f = fopen(path, "r");
     if (!f) return 0;
 
@@ -110,6 +117,7 @@ int csv_load_payroll(const char* path, PayrollRecord* out, int max) {
         int n = parse_csv_line(copy, tok, 24);
         if (n < 17) continue;
 
+        /* One CSV row becomes one in-memory PayrollRecord struct. */
         PayrollRecord* p = &out[count++];
         memset(p, 0, sizeof(*p));
         p->id                    = atoi(tok[0]);
@@ -137,6 +145,7 @@ int csv_load_payroll(const char* path, PayrollRecord* out, int max) {
 }
 
 int csv_save_payroll(const char* path, const PayrollRecord* arr, int count) {
+    /* Rewrites the entire payroll dataset back to payroll.csv. */
     FILE* f = fopen(path, "w");
     if (!f) return 0;
     fprintf(f, "id,employee_id,period_start,period_end,base_salary,"
@@ -163,6 +172,7 @@ int csv_save_payroll(const char* path, const PayrollRecord* arr, int count) {
 }
 
 int csv_next_payroll_id(const PayrollRecord* arr, int count) {
+    /* Simulates auto-increment for payroll records. */
     int max = 0;
     for (int i = 0; i < count; i++)
         if (arr[i].id > max) max = arr[i].id;
@@ -170,6 +180,7 @@ int csv_next_payroll_id(const PayrollRecord* arr, int count) {
 }
 
 void csv_today(char* buf, int buflen) {
+    /* Shared date helper so saved rows use one consistent format. */
     time_t t = time(NULL);
     struct tm* tm = localtime(&t);
     strftime(buf, (size_t)buflen, "%Y-%m-%d", tm);

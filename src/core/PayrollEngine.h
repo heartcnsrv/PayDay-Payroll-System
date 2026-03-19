@@ -3,12 +3,17 @@
 
 #include "PayrollTypes.h"
 
+/* Default deduction/business rules used by payroll_calculate(). */
 #define DEFAULT_TAX_RATE         0.15
 #define DEFAULT_SSS_RATE         0.045
 #define DEFAULT_PHILHEALTH_RATE  0.025
 #define DEFAULT_PAGIBIG_FIXED    100.0
 #define DEFAULT_OVERTIME_RATE    1.25  
 
+/*
+ * Business-logic layer. It receives struct data already loaded from CSV,
+ * computes a payroll record, and returns it to the caller for saving.
+ */
 void payroll_calculate(
     PayrollRecord*      out,
     const Employee*     emp,
@@ -27,6 +32,7 @@ double payroll_net             (double gross, double total_deductions);
 
 int  payroll_validate_employee (const Employee* e, char* err_out, int err_len);
 
+/* Used by the password-reset flow. */
 void payroll_generate_token    (char* out, int len);
 
 #endif 

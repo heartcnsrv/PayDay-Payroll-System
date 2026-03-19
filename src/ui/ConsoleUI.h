@@ -3,6 +3,11 @@
 
 #include "../core/PayrollTypes.h"
 
+/*
+ * Console presentation layer.
+ * These screens orchestrate the app flow by loading structs, collecting input,
+ * calling the payroll engine, and saving results through CSVManager.
+ */
 void ui_clear  (void);
 void ui_logo   (void);
 void ui_hr     (void);

@@ -18,6 +18,7 @@
 #endif
 
 int main(void) {
+    /* Creates the folder that acts as storage location. */
     mkdir_compat("data");
 
     const char* emp_path = "data/employees.csv";
@@ -39,6 +40,7 @@ int main(void) {
         fclose(pf);
     }
 
+    /* Main in-memory cache of employees loaded from employees.csv. */
     Employee employees[MAX_EMPLOYEES];
     int emp_count = csv_load_employees(emp_path, employees, MAX_EMPLOYEES);
 
@@ -50,6 +52,7 @@ int main(void) {
     }
 
     for (;;) {
+        /* Reload each loop so the UI sees the latest saved CSV state. */
         emp_count = csv_load_employees(emp_path, employees, MAX_EMPLOYEES);
 
         Employee current;
@@ -58,6 +61,7 @@ int main(void) {
 
         emp_count = csv_load_employees(emp_path, employees, MAX_EMPLOYEES);
 
+        /* The logged-in Employee struct decides which menu flow is used. */
         if (current.role == ROLE_ADMIN)
             screen_admin_menu(&current, employees, &emp_count, emp_path, pay_path);
         else
