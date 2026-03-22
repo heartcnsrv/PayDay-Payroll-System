@@ -54,8 +54,8 @@
 #define WHT "\033[97m"
 
 void ui_clear  (void) { system(CLEAR); }
-void ui_hr     (void) { printf(PNK "  ──────────────────────────────────────────────────\n" R); }
-void ui_dhr    (void) { printf(PNK "  ══════════════════════════════════════════════════\n" R); }
+void ui_hr     (void) { printf(PNK "  --------------------------------------------------\n" R); }
+void ui_dhr    (void) { printf(PNK "  --------------------------------------------------\n" R); }
 void ui_success(const char* m) { printf(GRN "\n  ✓  %s\n" R, m); }
 void ui_error  (const char* m) { printf(RED "\n  ✗  %s\n" R, m); }
 void ui_warn   (const char* m) { printf(YLW "\n  !  %s\n" R, m); }
@@ -390,7 +390,7 @@ void screen_calc_payroll(Employee* emp, const char* pay_path) {
     printf("  Base Salary                    PHP %12.2f\n",  rec.base_salary);
     printf("  Overtime  (%.1fh × PHP %.2f × %.2fx)  PHP %10.2f\n",
            ot, emp->hourly_rate, DEFAULT_OVERTIME_RATE, rec.overtime_pay);
-    printf(GRN "  ─────────────────────────────────────────────\n"
+    printf(GRN "  --------------------------------------------------\n"
                "  GROSS PAY                      PHP %12.2f\n" R, rec.gross_pay);
 
     printf(RED
@@ -399,7 +399,7 @@ void screen_calc_payroll(Employee* emp, const char* pay_path) {
            "  PhilHealth(2.5%%)               PHP %12.2f\n"
            "  Pag-IBIG  (fixed)              PHP %12.2f\n"
            "  Other Deductions               PHP %12.2f\n"
-           "  ─────────────────────────────────────────────\n"
+           "  ---------------------------------------------\n"
            "  TOTAL DEDUCTIONS               PHP %12.2f\n" R,
            rec.tax_deduction, rec.sss_deduction,
            rec.philhealth_deduction, rec.pagibig_deduction,
@@ -454,7 +454,7 @@ void screen_payslip(int payroll_id, Employee* employees, int emp_count,
     printf("  Base Salary                    PHP %12.2f\n", p->base_salary);
     printf("  Overtime  (%.1fh)              PHP %12.2f\n", p->overtime_hours, p->overtime_pay);
     printf(GRN
-           "  ─────────────────────────────────────────────\n"
+           "  --------------------------------------------------\n"
            "  GROSS PAY                      PHP %12.2f\n" R, p->gross_pay);
     ui_hr();
     printf(WHT "  DEDUCTIONS\n" R);
@@ -464,7 +464,7 @@ void screen_payslip(int payroll_id, Employee* employees, int emp_count,
            "  PhilHealth (2.5%%)              PHP %12.2f\n"
            "  Pag-IBIG   (fixed)             PHP %12.2f\n"
            "  Other Deductions               PHP %12.2f\n"
-           "  ─────────────────────────────────────────────\n"
+           "  --------------------------------------------------\n"
            "  TOTAL DEDUCTIONS               PHP %12.2f\n" R,
            p->tax_deduction, p->sss_deduction,
            p->philhealth_deduction, p->pagibig_deduction,

@@ -1,0 +1,180 @@
+# payroll system
+
+## HOW TO RUN (WINDOWS POWERSHELL)
+
+### STEP 1 — GO TO PROJECT FOLDER
+
+```
+cd "C:\Users\heart\Downloads\PayDay" 
+```
+
+---
+
+### STEP 2 — COMPILE TERMINAL UI
+
+```
+gcc main.c src/ui/ConsoleUI.c src/utils/CSVManager.c src/core/PayrollEngine.c -o app.exe
+```
+
+---
+
+### STEP 3 — RUN TERMINAL UI
+
+```
+.\app.exe
+```
+
+---
+
+### STEP 4 — COMPILE BACKEND SERVER
+
+```
+gcc server_main.c src/server/HttpServer.c src/utils/CSVManager.c src/core/PayrollEngine.c -o server.exe
+```
+
+---
+
+### STEP 5 — RUN SERVER
+
+```
+.\server.exe
+```
+
+---
+
+## BASIC CONCEPTS
+
+### What is .c?
+
+It contains how the modules work (implementation).
+
+### What is .h?
+
+It contains struct definitions, function declarations, and what the module offers.
+
+### Why split?
+
+To organize the code better and make it easier to maintain.
+
+---
+
+### What is a struct?
+
+A custom data type that groups related variables together.
+Without struct, too many separate variables would be needed, making the code messy.
+
+### Why use struct arrays?
+
+Because each row from CSV maps naturally to one struct object.
+That makes the data easier to process.
+
+### What is an enum?
+
+A named list of constant values.
+
+---
+
+## DATA STORAGE
+
+### How is data stored?
+
+In CSV text files.
+
+### Why CSV?
+
+Easier to read and inspect.
+Simpler than using SQL for a small project.
+
+### What is soft delete?
+
+Instead of removing data, it marks it as inactive.
+
+---
+
+## PROGRAM FLOW
+
+### What happens when the program starts?
+
+* Creates data folder if missing
+* Ensures payroll.csv has a header
+* Loads employees.csv
+* Shows login screen
+* Routes user to admin or employee menu
+
+---
+
+## CSV FUNCTIONS
+
+### What is csv_load_employees()?
+
+Reads employees.csv, converts each row into an Employee struct, and stores them in an array.
+
+### What is csv_save_employees()?
+
+Writes the employee array back into employees.csv.
+
+### What is csv_load_payroll()?
+
+Reads payroll.csv and converts rows into PayrollRecord structs.
+
+### What is csv_save_payroll()?
+
+Saves payroll records back into payroll.csv.
+
+---
+
+## MEMORY
+
+### What happens after data is changed in memory?
+
+The program saves the updated array back to CSV so changes are not lost.
+
+---
+
+## SYSTEM COMPONENTS
+
+### What is the role of CSVManager?
+
+It is the storage layer.
+
+### What is the role of HttpServer?
+
+It is the backend server layer.
+It accepts HTTP requests and returns JSON responses.
+
+---
+
+## FRONTEND CONNECTION
+
+### How does the GUI/browser connect to the backend?
+
+* Browser sends HTTP requests
+* Server receives JSON
+* Processes data
+* Reads/writes CSV
+* Returns JSON response
+
+---
+
+## ENTRY POINTS
+
+### Why does the project have main.c and server_main.c?
+
+They are two different entry points.
+
+* main.c → runs terminal app
+* server_main.c → runs backend server
+
+---
+
+## DESIGN CHOICES
+
+### Why use arrays instead of a database?
+
+Because this is a small, lightweight project.
+Arrays are simpler and enough for this use case.
+
+### Why does the backend return JSON?
+
+Because browser/frontend apps understand JSON easily.
+It is the standard format for web APIs.
