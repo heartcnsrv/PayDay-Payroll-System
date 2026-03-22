@@ -115,7 +115,7 @@ void screen_calc_payroll(Employee* emp, const char* pay_path);
  * Can filter by employee ID.
  */
 void screen_payroll_list(int filter_emp_id, Employee* employees, int emp_count,
-                         const char* pay_path);
+                         const char* pay_path, int allow_release);
 
 /*
  * Displays detailed payslip for a given payroll record.

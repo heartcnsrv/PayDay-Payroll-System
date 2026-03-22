@@ -518,7 +518,7 @@ void screen_release_payroll(Employee* employees, int emp_count, const char* pay_
 }
 
 void screen_payroll_list(int filter_emp_id, Employee* employees, int emp_count,
-                         const char* pay_path) {
+                         const char* pay_path, int allow_release) {
     for (;;) {
         /* Refresh from disk each time so the list reflects the latest CSV data. */
         PayrollRecord payroll[MAX_PAYROLL];
@@ -552,9 +552,11 @@ void screen_payroll_list(int filter_emp_id, Employee* employees, int emp_count,
         if (!n) ui_info("No payroll records found.");
         ui_hr();
         printf(GRY "  %d record(s)\n\n" R, n);
-        printf(WHT "  [V]" R " View Payslip   "
-               WHT "[R]" R " Release   "
-               WHT "[0]" R " Back\n");
+        printf(WHT "  [V]" R " View Payslip   ");
+            if (allow_release) {
+                printf(WHT "[R]" R " Release   ");
+            }
+            printf(WHT "[0]" R " Back\n");
         ui_hr();
 
         char ch[8]; get_line("Choice : ", ch, sizeof(ch));
@@ -563,7 +565,7 @@ void screen_payroll_list(int filter_emp_id, Employee* employees, int emp_count,
             int id = get_int("Record # to view: ");
             screen_payslip(id, employees, emp_count, pay_path);
         }
-        else if (ch[0]=='r'||ch[0]=='R') {
+        else if ((ch[0]=='r'||ch[0]=='R') && allow_release) {
             screen_release_payroll(employees, emp_count, pay_path);
         }
     }
@@ -652,7 +654,7 @@ void screen_admin_menu(Employee* admin, Employee* employees, int* emp_count,
             if (!t) { ui_error("Not found."); ui_pause(1000); goto reload; }
             screen_calc_payroll(t, pay_path);
         }
-        else if (ch[0]=='6') screen_payroll_list(0, employees, *emp_count, pay_path);
+        else if (ch[0]=='6') screen_payroll_list(0, employees, *emp_count, pay_path, 1);
         else if (ch[0]=='7') screen_report(employees, *emp_count, pay_path);
         else if (ch[0]=='0') break;
 
@@ -673,7 +675,7 @@ void screen_employee_menu(Employee* emp, const char* pay_path,
         printf(WHT "  [0]" R "  Logout\n");
         ui_hr();
         char ch[4]; get_line("Choice : ", ch, sizeof(ch));
-        if      (ch[0]=='1') screen_payroll_list(emp->id, employees, emp_count, pay_path);
+        if      (ch[0]=='1') screen_payroll_list(emp->id, employees, emp_count, pay_path, 0);
         else if (ch[0]=='0') break;
     }
 }
