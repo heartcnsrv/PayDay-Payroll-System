@@ -45,21 +45,27 @@
 
 #define R   "\033[0m"
 #define BLD "\033[1m"
-#define GRN "\033[92m"
-#define YLW "\033[93m"
-#define PNK "\033[95m"
-#define CYN "\033[96m"
-#define GRY "\033[90m"
-#define RED "\033[91m"
+
+#define GRN "\033[38;5;71m"    
+#define GRN2 "\033[38;5;65m"   
+#define GRN3 "\033[38;5;108m"  
+
+#define YLW "\033[38;5;137m"   
+#define RED "\033[38;5;167m"   
+
+#define CYN "\033[38;5;79m"    
+#define PNK "\033[38;5;65m"    
+
+#define GRY "\033[38;5;240m"
 #define WHT "\033[97m"
 
 void ui_clear  (void) { system(CLEAR); }
-void ui_hr     (void) { printf(PNK "  --------------------------------------------------\n" R); }
-void ui_dhr    (void) { printf(PNK "  --------------------------------------------------\n" R); }
-void ui_success(const char* m) { printf(GRN "\n  [OK] %s\n" R, m); }
-void ui_error  (const char* m) { printf(RED "\n  [ERR] %s\n" R, m); }
+void ui_hr     (void) { printf(GRN2 "  --------------------------------------------------\n" R); }
+void ui_dhr    (void) { printf(GRN "  --------------------------------------------------\n" R); }
+void ui_success(const char* m) { printf(GRN BLD "\n  [OK] %s\n" R, m); }
+void ui_error  (const char* m) { printf(RED BLD "\n  [ERR] %s\n" R, m); }
 void ui_warn   (const char* m) { printf(YLW "\n  [WARN] %s\n" R, m); }
-void ui_info   (const char* m) { printf(CYN "\n  [INFO] %s\n" R, m); }
+void ui_info   (const char* m) { printf(GRN3 "\n  [INFO] %s\n" R, m); }
 
 void ui_pause(int ms) {
 #ifdef _WIN32
@@ -71,11 +77,11 @@ void ui_pause(int ms) {
 
 void ui_logo(void) {
     printf("\n");
-    printf(GRY "   Employee Payroll System\n\n" R);
+    printf(GRN BLD "   Match-a-Bank Payroll System\n\n" R);
 }
 
 void get_line(const char* prompt, char* out, int len) {
-    printf(CYN "  %s" WHT, prompt);
+    printf(GRN2 "  %s" WHT, prompt);
     fflush(stdout);
     out[0] = '\0';
     if (fgets(out, len, stdin)) {
@@ -669,7 +675,7 @@ void screen_employee_menu(Employee* emp, const char* pay_path,
     /* Employee users only navigate their own saved payroll history. */
     for (;;) {
         phdr("Employee Portal", emp->full_name);
-        printf(GRY "  %s  ·  %s  ·  Base: PHP %.2f\n\n" R,
+        printf(GRY "  %s | %s | Base: PHP %.2f\n\n" R,
                emp->department, emp->position, emp->base_salary);
         printf(WHT "  [1]" R "  My Payroll Records  (view payslip)\n");
         printf(WHT "  [0]" R "  Logout\n");
