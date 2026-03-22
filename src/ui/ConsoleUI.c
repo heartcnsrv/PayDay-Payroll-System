@@ -56,10 +56,10 @@
 void ui_clear  (void) { system(CLEAR); }
 void ui_hr     (void) { printf(PNK "  --------------------------------------------------\n" R); }
 void ui_dhr    (void) { printf(PNK "  --------------------------------------------------\n" R); }
-void ui_success(const char* m) { printf(GRN "\n  ✓  %s\n" R, m); }
-void ui_error  (const char* m) { printf(RED "\n  ✗  %s\n" R, m); }
-void ui_warn   (const char* m) { printf(YLW "\n  !  %s\n" R, m); }
-void ui_info   (const char* m) { printf(CYN "\n  ·  %s\n" R, m); }
+void ui_success(const char* m) { printf(GRN "\n  [OK] %s\n" R, m); }
+void ui_error  (const char* m) { printf(RED "\n  [ERR] %s\n" R, m); }
+void ui_warn   (const char* m) { printf(YLW "\n  [WARN] %s\n" R, m); }
+void ui_info   (const char* m) { printf(CYN "\n  [INFO] %s\n" R, m); }
 
 void ui_pause(int ms) {
 #ifdef _WIN32
